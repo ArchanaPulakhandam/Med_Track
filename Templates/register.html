@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register - MedTrack</title>
+  <style>
+    /* Keep your exact CSS — it’s good! */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Arial, sans-serif; background-color:#f5f7fa; }
+    header { background-color: #001f3f; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+    .logo { font-size: 24px; font-weight: bold; }
+    .logo span { color: #00bfff; }
+    nav a { color: white; margin-left: 20px; text-decoration: none; font-weight: bold; }
+    .container { max-width: 500px; margin: 50px auto; background: #fff; padding: 40px 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+    h2 { text-align: center; margin-bottom: 10px; }
+    .text-center { text-align: center; margin: 10px 0; }
+    .toggle { display: flex; justify-content: center; margin: 20px 0; }
+    .toggle button { flex: 1; padding: 12px; border: 1px solid #00bfff; background: white; cursor: pointer; font-weight: bold; transition: background 0.3s; }
+    .toggle button.active { background: #e6f7ff; border-bottom: 3px solid #00bfff; }
+    form { display: flex; flex-direction: column; gap: 15px; }
+    input, select { padding: 12px; border: 1px solid #ccc; border-radius: 6px; width: 100%; }
+    .submit-btn { background: #00bfff; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: background 0.3s; }
+    .submit-btn:hover { background: #007acc; }
+    footer { text-align: center; background: #001f3f; color: white; padding: 20px; margin-top: 40px; font-size: 14px; }
+    #specializationField { display: none; }
+    a { color: #00bfff; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">Med<span>Track</span></div>
+    <nav>
+      <a href="{{ url_for('login') }}">Login</a>
+      <a href="{{ url_for('register') }}">Register</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h2>Register</h2>
+    <p class="text-center">Create your account</p>
+
+    <div class="toggle">
+      <button id="patientBtn" class="active">Patient</button>
+      <button id="doctorBtn">Doctor</button>
+    </div>
+
+    <form method="POST" action="{{ url_for('register') }}">
+      <input type="hidden" name="role" id="roleInput" value="patient" />
+
+      <input type="text" name="name" placeholder="Full Name" required />
+      <input type="email" name="email" placeholder="Email Address" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <input type="password" name="confirmPassword" placeholder="Confirm Password" required />
+      <input type="number" name="age" placeholder="Age" required min="1" />
+      <select name="gender" required>
+        <option value="">Select Gender</option>
+        <option value="female">Female</option>
+        <option value="male">Male</option>
+        <option value="other">Other</option>
+      </select>
+
+      <select id="specializationField" name="specialization">
+        <option value="">Select Specialization</option>
+        <option>Cardiology</option>
+        <option>Dermatology</option>
+        <option>Neurology</option>
+        <option>Pediatrics</option>
+        <option>Psychiatry</option>
+      </select>
+
+      <button type="submit" class="submit-btn">Register</button>
+    </form>
+
+    <p class="text-center">Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+  </div>
+
+  <footer>
+    © 2025 HealthCare App. All rights reserved.
+  </footer>
+
+  <script>
+    const patientBtn = document.getElementById("patientBtn");
+    const doctorBtn = document.getElementById("doctorBtn");
+    const specializationField = document.getElementById("specializationField");
+    const roleInput = document.getElementById("roleInput");
+
+    function toggleRole(role) {
+      roleInput.value = role;
+      if (role === "patient") {
+        patientBtn.classList.add("active");
+        doctorBtn.classList.remove("active");
+        specializationField.style.display = "none";
+        specializationField.removeAttribute("required");
+      } else {
+        doctorBtn.classList.add("active");
+        patientBtn.classList.remove("active");
+        specializationField.style.display = "block";
+        specializationField.setAttribute("required", "required");
+      }
+    }
+
+    patientBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      toggleRole("patient");
+    });
+
+    doctorBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      toggleRole("doctor");
+    });
+
+    window.onload = () => toggleRole("patient");
+  </script>
+
+</body>
+</html>

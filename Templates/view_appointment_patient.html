@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Appointment Details - MedTrack</title>
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; background: #f5f7fa; }
+    header { background-color: #0d1b2a; padding: 15px 30px; color: white; display: flex; justify-content: space-between; align-items: center; }
+    .logo span { color: #00b4d8; }
+    nav a { color: white; text-decoration: none; margin-left: 20px; font-weight: bold; }
+    .container { padding: 30px; }
+    .details-box { background: white; padding: 20px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    h2 { margin-top: 0; }
+    p { margin: 10px 0; }
+    .btn { display: inline-block; padding: 8px 12px; background-color: #0077b6; color: white; text-decoration: none; border-radius: 4px; margin-top: 20px; }
+    .btn:hover { background-color: #023e8a; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Med<span>Track</span></div>
+    <nav class="nav-right">
+      <a href="{{ url_for('patient_dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('patient_profile') }}">Profile</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="details-box">
+      <h2>Appointment Details</h2>
+      {% if appointment %}
+      <p><strong>Doctor:</strong> {{ appointment.doctor_name }}</p>
+      <p><strong>Date:</strong> {{ appointment.date }}</p>
+      <p><strong>Time:</strong> {{ appointment.time or '-' }}</p>
+      <p><strong>Symptoms:</strong> {{ appointment.symptoms }}</p>
+      <p><strong>Status:</strong> {{ appointment.status }}</p>
+      {% else %}
+      <p>No appointment found or you don't have permission to view it.</p>
+      {% endif %}
+    </div>
+    <a href="{{ url_for('patient_dashboard') }}" class="btn">← Back to Dashboard</a>
+  </div>
+</body>
+</html>

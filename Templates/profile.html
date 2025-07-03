@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Profile - MedTrack</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+    }
+
+    header {
+      background-color: #0d1b2a;
+      padding: 15px 30px;
+      color: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo span {
+      color: #00b4d8;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin-left: 20px;
+      font-weight: bold;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 40px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #1e293b;
+    }
+
+    .profile-info {
+      line-height: 1.8;
+    }
+
+    .profile-info p {
+      margin: 10px 0;
+      font-size: 16px;
+    }
+
+    .profile-info strong {
+      display: inline-block;
+      width: 150px;
+      color: #333;
+    }
+
+    .btn {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 10px 18px;
+      background: #0077b6;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+
+    .btn:hover {
+      background: #005f8f;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Med<span>Track</span></div>
+    <nav>
+      {% if user.role == 'doctor' %}
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+      {% else %}
+        <a href="{{ url_for('dashboard') }}">Dashboard</a>
+      {% endif %}
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h2>Profile</h2>
+    <div class="profile-info">
+      <p><strong>Full Name:</strong> {{ user.name }}</p>
+      <p><strong>Email:</strong> {{ user.email }}</p>
+      <p><strong>Role:</strong> {{ user.role }}</p>
+      {% if user.role == 'doctor' %}
+        <p><strong>Specialization:</strong> {{ user.specialization }}</p>
+      {% endif %}
+      {% if user.role == 'patient' %}
+        <p><strong>Age:</strong> {{ user.age }}</p>
+        <p><strong>Gender:</strong> {{ user.gender }}</p>
+      {% endif %}
+    </div>
+
+    {% if user.role == 'doctor' %}
+      <a href="{{ url_for('dashboard') }}" class="btn">← Back to Dashboard</a>
+    {% else %}
+      <a href="{{ url_for('dashboard') }}" class="btn">← Back to Dashboard</a>
+    {% endif %}
+  </div>
+</body>
+</html>

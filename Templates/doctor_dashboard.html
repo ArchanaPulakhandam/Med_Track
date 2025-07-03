@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Doctor Dashboard - MedTrack</title> 
+  <style>
+    body { margin: 0; font-family: Arial, sans-serif; background: #f5f7fa;; }
+    header { background-color: #0d1b2a; padding: 15px 30px; color: white; display: flex; justify-content: space-between; align-items: center; }
+    .logo span { color: #00b4d8; }
+    nav a { color: white; text-decoration: none; margin-left: 20px; font-weight: bold; }
+    nav a:hover { text-decoration: underline; }
+    .container { padding: 30px; }
+    .success-banner { background: #c2f0c2; padding: 10px; margin-bottom: 20px; border-left: 5px solid green; color: #333; }
+    .welcome-banner { background: #005f73; color: white; padding: 20px; border-radius: 6px; font-size: 18px; margin-bottom: 20px; }
+    .stats { display: flex; justify-content: space-around; text-align: center; margin-bottom: 20px; }
+    .stat-box { background: white; padding: 20px; border-radius: 8px; width: 30%; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .tabs { display: flex; margin-bottom: 20px; gap: 15px; }
+    .tab { padding: 10px 20px; background: #dbeafe; border-radius: 4px; cursor: pointer; }
+    .tab.active { background: #2563eb; color: white; }
+    .appointments-table { background: white; padding: 20px; border-radius: 6px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+    .btn { padding: 6px 10px; background-color: #0077b6; color: white; border: none; border-radius: 4px; text-decoration: none; cursor: pointer; }
+    .status-pending { color: orange; font-weight: bold; }
+    .status-completed { color: green; font-weight: bold; }
+    .search-bar { display: flex; justify-content: flex-end; margin-bottom: 20px; }
+    .search-bar input { padding: 8px; margin-right: 10px; width: 250px; }
+    .search-bar button { padding: 8px 12px; background: #0077b6; color: white; border: none; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Med<span>Track</span></div>
+    <nav>
+      <a href="{{ url_for('doctor_dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('doctor_profile') }}">Profile</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    {% if success_message %}
+      <div class="success-banner">{{ success_message }}</div>
+    {% endif %}
+
+    <div class="welcome-banner">
+      Welcome, Dr. {{ doctor_name }}.<br />
+      <small>Manage your appointments and patient consultations from your dashboard.</small>
+    </div>
+
+    <div class="search-bar">
+      <form method="GET" action="{{ url_for('doctor_dashboard') }}">
+  <input type="text" name="search_query" placeholder="Search patient name..." value="{{ search_query or '' }}">
+  <button type="submit">Search</button>
+</form>
+
+
+    </div>
+
+    <div class="stats">
+      <div class="stat-box">
+        <h3>{{ pending_count }}</h3>
+        <p>Pending Appointments</p>
+      </div>
+      <div class="stat-box">
+        <h3>{{ completed_count }}</h3>
+        <p>Completed Appointments</p>
+      </div>
+      <div class="stat-box">
+        <h3>{{ total_count }}</h3>
+        <p>Total Appointments</p>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <a href="{{ url_for('doctor_dashboard', status_filter='Pending') }}" class="tab {% if status_filter == 'Pending' %}active{% endif %}">Pending Appointments</a>
+      <a href="{{ url_for('doctor_dashboard', status_filter='Completed') }}" class="tab {% if status_filter == 'Completed' %}active{% endif %}">Completed Appointments</a>
+      <a href="{{ url_for('doctor_dashboard', status_filter='All') }}" class="tab {% if status_filter == 'All' %}active{% endif %}">All Appointments</a>
+    </div>
+
+    <div class="appointments-table">
+      <h3>Appointments</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Patient Name</th>
+            <th>Date</th>
+            <th>Symptoms</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if appointments %}
+            {% for appointment in appointments %}
+            <tr>
+              <td>{{ appointment.patient_name }}</td>
+              <td>{{ appointment.date }}</td>
+              <td>{{ appointment.symptoms }}</td>
+              <td class="{% if appointment.status == 'Pending' %}status-pending{% else %}status-completed{% endif %}">
+                {{ appointment.status }}
+              </td>
+              <td>
+                <a class="btn" href="{{ url_for('view_appointment_doctor', id=appointment.id) }}">View</a>
+              </td>
+            </tr>
+            {% endfor %}
+          {% else %}
+            <tr><td colspan="5">No appointments found.</td></tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

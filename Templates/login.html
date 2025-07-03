@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - MedTrack</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+    }
+
+    header {
+      background-color: #0d1b2a;
+      color: white;
+      padding: 15px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .logo span {
+      color: #00b4d8;
+    }
+
+    nav a {
+      color: white;
+      margin-left: 20px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 500px;
+      background: white;
+      margin: 40px auto;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .toggle {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+    }
+
+    .toggle button {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #00b4d8;
+      background: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .toggle button.active {
+      background-color: #e0f7ff;
+    }
+
+    form {
+      display: grid;
+      gap: 15px;
+    }
+
+    input {
+      padding: 10px;
+      width: 100%;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .submit-btn {
+      background-color: #00b4d8;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      padding: 12px;
+      border-radius: 4px;
+    }
+
+    .form-footer {
+      text-align: right;
+      margin-top: -5px;
+    }
+
+    .form-footer a {
+      color: #00b4d8;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .text-center {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+      background: #0d1b2a;
+      color: white;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Med<span>Track</span></div>
+    <nav>
+      <a href="{{ url_for('login') }}">Login</a>
+      <a href="{{ url_for('register') }}">Register</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h2>Login to Your Account</h2>
+    <p class="text-center">Access your healthcare dashboard to manage appointments</p>
+
+    <div class="toggle">
+      <button id="patientBtn" class="active">Patient</button>
+      <button id="doctorBtn">Doctor</button>
+    </div>
+
+    <form method="POST" action="{{ url_for('login') }}">
+      <input type="email" name="email" placeholder="Email Address" required />
+      <input type="password" name="password" placeholder="Password" required />
+      <input type="hidden" id="roleInput" name="role" value="patient" />
+
+      <div class="form-footer">
+         <a href="#" id="forgotPasswordLink">Forgot password?</a>
+      </div>
+
+      <button type="submit" class="submit-btn">Login</button>
+    </form>
+
+    <p class="text-center">Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
+  </div>
+
+  <footer>
+    © 2025 HealthCare App. All rights reserved.
+  </footer>
+
+  <script>
+    const patientBtn = document.getElementById("patientBtn");
+    const doctorBtn = document.getElementById("doctorBtn");
+    const roleInput = document.getElementById("roleInput");
+
+    function toggleRole(role) {
+      roleInput.value = role;
+      if (role === "patient") {
+        patientBtn.classList.add("active");
+        doctorBtn.classList.remove("active");
+      } else {
+        doctorBtn.classList.add("active");
+        patientBtn.classList.remove("active");
+      }
+    }
+
+    patientBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      toggleRole("patient");
+    });
+
+    doctorBtn.addEventListener("click", function (e) {
+      e.preventDefault();
+      toggleRole("doctor");
+    });
+
+    window.onload = () => toggleRole("patient");
+  </script>
+</body>
+</html>

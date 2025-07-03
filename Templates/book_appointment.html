@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Book Appointment - MedTrack App</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f0f2f5; margin: 0; padding: 0; }
+    .navbar { background-color: #001f3f; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+    .navbar a { color: white; text-decoration: none; margin-left: 20px; }
+    .container { max-width: 900px; margin: 30px auto; background: #fff; padding: 30px; border-radius: 12px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    h2 { margin-top: 0; }
+    .doctor-list { display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px; }
+    .doctor-card { width: 160px; padding: 15px; text-align: center; border: 2px solid #ccc; border-radius: 10px; cursor: pointer; transition: 0.3s; }
+    .doctor-card:hover { border-color: #007bff; }
+    .doctor-card.selected { border-color: #007bff; background-color: #e6f0ff; }
+    .doc-icon { width: 40px; height: 40px; background: #007bff; color: white; margin: 0 auto 10px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    label { display: block; margin: 10px 0 5px; }
+    input, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; margin-bottom: 10px; }
+    button { background: #007bff; color: white; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    footer { text-align: center; margin-top: 50px; padding: 20px; background: #001f3f; color: white; }
+  </style>
+</head>
+<body>
+
+  <div class="navbar">
+    <div><strong>Med</strong><span style="color:#00bfff;">Track</span></div>
+    <div>
+      <a href="{{ url_for('patient_dashboard') }}">Dashboard</a>
+      <a href="{{ url_for('patient_profile') }}">Profile</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <h2>Book an Appointment</h2>
+    <p>Select a doctor and provide your symptoms to book a consultation.</p>
+
+    <form method="POST" action="{{ url_for('book_appointment') }}">
+      <div class="doctor-list">
+        {% if doctors %}
+          {% for doctor in doctors %}
+          <label class="doctor-card">
+            <input type="radio" name="doctor_email" value="{{ doctor.email }}" style="display:none;" required>
+            <div class="doc-icon">{{ doctor.name[0]|upper }}</div>
+            <div>{{ doctor.name }}</div>
+            <small>{{ doctor.specialization }}</small>
+          </label>
+          {% endfor %}
+        {% else %}
+          <p>No doctors available at the moment.</p>
+        {% endif %}
+      </div>
+
+      <label for="patient_name">Your Name</label>
+      <input type="text" name="patient_name" id="patient_name" placeholder="Enter your full name" required value="{{ patient_name }}">
+
+      <label for="date">Appointment Date</label>
+      <input type="date" name="date" id="date" required>
+
+      <label for="time">Appointment Time</label>
+      <input type="time" name="time" id="time" required>
+
+      <label for="symptoms">Symptoms/Reason for Visit</label>
+      <textarea name="symptoms" id="symptoms" placeholder="Describe your symptoms here..." required></textarea>
+
+      <button type="submit">Book Appointment</button>
+    </form>
+  </div>
+
+  <footer>
+    © 2025 HealthCare App. All rights reserved.
+  </footer>
+
+  <script>
+    // Add simple selection highlight for radio labels:
+    const doctorCards = document.querySelectorAll('.doctor-card');
+    doctorCards.forEach(card => {
+      card.addEventListener('click', () => {
+        doctorCards.forEach(c => c.classList.remove('selected'));
+        card.classList.add('selected');
+        card.querySelector('input[type="radio"]').checked = true;
+      });
+    });
+  </script>
+</body>
+</html>
