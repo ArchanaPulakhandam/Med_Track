@@ -149,8 +149,7 @@ def logout():
     flash('You have been logged out.', 'success')
     return redirect(url_for('login'))
 
-@app.route('/dashboard', endpoint='doctor_dashboard')
-@app.route('/dashboard', endpoint='patient_dashboard')
+@app.route('/dashboard')
 def dashboard():
     if not is_logged_in():
         return redirect(url_for('login'))
@@ -162,7 +161,14 @@ def dashboard():
             ExpressionAttributeNames={"#doctor_email": "doctor_email"},
             ExpressionAttributeValues={":email": email}
         ).get('Items', [])
-        return render_template('doctor_dashboard.html', appointments=appointments, doctor_name=session.get('name', ''), pending_count=sum(1 for a in appointments if a['status'] == 'pending'), completed_count=sum(1 for a in appointments if a['status'] == 'completed'), total_count=len(appointments))
+        return render_template(
+            'doctor_dashboard.html',
+            appointments=appointments,
+            doctor_name=session.get('name', ''),
+            pending_count=sum(1 for a in appointments if a.get('status') == 'pending'),
+            completed_count=sum(1 for a in appointments if a.get('status') == 'completed'),
+            total_count=len(appointments)
+        )
     else:
         appointments = appointment_table.scan(
             FilterExpression="#patient_email = :email",
@@ -174,7 +180,15 @@ def dashboard():
             ExpressionAttributeNames={"#role": "role"},
             ExpressionAttributeValues={":role": 'doctor'}
         ).get('Items', [])
-        return render_template('patient_dashboard.html', patient_name=session.get('name', ''), appointments=appointments, doctors=doctors, pending_count=sum(1 for a in appointments if a['status'] == 'pending'), completed_count=sum(1 for a in appointments if a['status'] == 'completed'), total_count=len(appointments))
+        return render_template(
+            'patient_dashboard.html',
+            patient_name=session.get('name', ''),
+            appointments=appointments,
+            doctors=doctors,
+            pending_count=sum(1 for a in appointments if a.get('status') == 'pending'),
+            completed_count=sum(1 for a in appointments if a.get('status') == 'completed'),
+            total_count=len(appointments)
+        )
 
 @app.route('/book_appointment', methods=['GET', 'POST'])
 def book_appointment():
@@ -258,7 +272,11 @@ def view_appointment(appointment_id):
             },
             ExpressionAttributeNames={'#s': 'status'}
         )
-        send_email(appointment['patient_email'], "Appointment Completed", f"Dear {appointment['patient_name']},\n\nYour appointment with Dr. {appointment['doctor_name']} has been completed.\nDiagnosis: {diagnosis}\nTreatment plan: {treatment_plan}\nPrescription: {prescription}")
+        send_email(
+            appointment['patient_email'],
+            "Appointment Completed",
+            f"Dear {appointment['patient_name']},\n\nYour appointment with Dr. {appointment['doctor_name']} has been completed.\nDiagnosis: {diagnosis}\nTreatment plan: {treatment_plan}\nPrescription: {prescription}"
+        )
         flash('Diagnosis submitted successfully.', 'success')
         return redirect(url_for('dashboard'))
     if session['role'] == 'doctor':
@@ -301,8 +319,7 @@ def search_appointments():
     appointments = response.get('Items', [])
     return render_template('search_results.html', results=appointments, query=search_term)
 
-@app.route('/profile', endpoint='doctor_profile')
-@app.route('/profile', endpoint='patient_profile')
+@app.route('/profile', methods=['GET', 'POST'])
 def profile():
     if not is_logged_in():
         return redirect(url_for('login'))
@@ -329,9 +346,13 @@ def profile():
         return redirect(url_for('profile'))
     return render_template('profile.html', user=user)
 
-# Run the app
+# ---------------------------------------
+# Entrypoint for WSGI (production servers)
+# ---------------------------------------
+application = app
+
+# For local dev
 if __name__ == '__main__':
-
     port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port, debug=True)
-
+    debug_mode = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+    app.run(host='0.0.0.0', port=port, debug=debug_mode)
